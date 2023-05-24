@@ -61,13 +61,13 @@ func main() {
 		fmt.Println("Can not unmarshal JSON")
 	}
 
-	//fmt.Println(PrettyPrint(result.Result))
-	for _, rec := range result.Result {
-		for _, cer := range rec.SSL.Cert {
-			fmt.Print(rec.Hostname)
-			fmt.Println(rec.Hostname, cer.Issued, cer.Expires)
-		}
-	}
+	fmt.Println(PrettyPrint(result.Result))
+	// for _, rec := range result.Result {
+	// 	for _, cer := range rec.SSL.Cert {
+	// 		fmt.Print(rec.Hostname)
+	// 		fmt.Println(rec.Hostname, cer.Issued, cer.Expires)
+	// 	}
+	// }
 
 	outputFile, err := os.Create("certs.csv")
 	if err != nil {
