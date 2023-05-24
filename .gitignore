@@ -2,3 +2,4 @@ certs.csv
 .env
 go.mod
 go.sum
+data.txt

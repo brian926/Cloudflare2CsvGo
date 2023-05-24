@@ -28,6 +28,47 @@ func PrettyPrint(i interface{}) string {
     return string(s)
 }
 
+func PrintJSON(str string) {
+	f, err := os.Create("data.txt")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    defer f.Close()
+
+    _, err2 := f.WriteString(str)
+    if err2 != nil {
+        log.Fatal(err2)
+    }
+}
+
+func PrintCSV(result Response) {
+	outputFile, err := os.Create("certs.csv")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer outputFile.Close()
+
+	writer := csv.NewWriter(outputFile)
+	defer writer.Flush()
+
+	header := []string{"Hostname", "Issued Date", "Expiration Date"}
+	if err := writer.Write(header); err != nil {
+		log.Fatalln(err)
+	}
+
+	for _, rec := range result.Result {
+		var csvRow []string
+		csvRow = append(csvRow, rec.Hostname)
+		for _, cer := range rec.SSL.Cert {
+			csvRow = append(csvRow, cer.Issued, cer.Expires)
+		}
+		if err := writer.Write(csvRow); err != nil {
+			log.Fatalln(err)
+		}
+	}
+}
+
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -53,15 +94,16 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	//sb := string(body)
-	//log.Printf(sb)
+	sb := string(body)
 
+	PrintJSON(sb)
+	
 	var result Response
 	if err := json.Unmarshal(body, &result); err != nil {
 		fmt.Println("Can not unmarshal JSON")
 	}
 
-	fmt.Println(PrettyPrint(result.Result))
+	//fmt.Println(PrettyPrint(result.Result))
 	// for _, rec := range result.Result {
 	// 	for _, cer := range rec.SSL.Cert {
 	// 		fmt.Print(rec.Hostname)
@@ -69,28 +111,5 @@ func main() {
 	// 	}
 	// }
 
-	outputFile, err := os.Create("certs.csv")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer outputFile.Close()
-
-	writer := csv.NewWriter(outputFile)
-	defer writer.Flush()
-
-	header := []string{"Hostname", "Issued Date", "Expiration Date"}
-	if err := writer.Write(header); err != nil {
-		log.Fatalln(err)
-	}
-
-	for _, rec := range result.Result {
-		var csvRow []string
-		csvRow = append(csvRow, rec.Hostname)
-		for _, cer := range rec.SSL.Cert {
-			csvRow = append(csvRow, cer.Issued, cer.Expires)
-		}
-		if err := writer.Write(csvRow); err != nil {
-			log.Fatalln(err)
-		}
-	}
+	PrintCSV(result)
 }
