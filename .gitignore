@@ -1,0 +1,4 @@
+certs.csv
+.env
+go.mod
+go.sum
