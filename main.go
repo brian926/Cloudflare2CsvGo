@@ -9,6 +9,7 @@ import(
 	"os"
 	"encoding/csv"
 	"github.com/joho/godotenv"
+	"time"
 )
 
 type Response struct {
@@ -18,6 +19,7 @@ type Response struct {
 			Cert []struct {
 				Expires string `json:"expires_on"`
 				Issued string `json:"issued_on"`
+				ID string `json:"id"`
 			} `json:"certificates"`
 		} `json:"ssl"`
 	} `json:"result"`
@@ -29,7 +31,11 @@ func PrettyPrint(i interface{}) string {
 }
 
 func PrintJSON(str string) {
-	f, err := os.Create("data.txt")
+	const layout = "01-02-2006"
+	t := time.Now()
+	file := "data/data-" + t.Format(layout) + ".txt"
+
+	f, err := os.Create(file)
     if err != nil {
         log.Fatal(err)
     }
@@ -43,7 +49,11 @@ func PrintJSON(str string) {
 }
 
 func PrintCSV(result Response) {
-	outputFile, err := os.Create("certs.csv")
+	const layout = "01-02-2006"
+	t := time.Now()
+	file := "certs/cert-" + t.Format(layout) + ".csv"
+
+	outputFile, err := os.Create(file)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -52,7 +62,7 @@ func PrintCSV(result Response) {
 	writer := csv.NewWriter(outputFile)
 	defer writer.Flush()
 
-	header := []string{"Hostname", "Issued Date", "Expiration Date"}
+	header := []string{"Hostname", "Issued Date", "Expiration Date", "ID"}
 	if err := writer.Write(header); err != nil {
 		log.Fatalln(err)
 	}
@@ -61,7 +71,7 @@ func PrintCSV(result Response) {
 		var csvRow []string
 		csvRow = append(csvRow, rec.Hostname)
 		for _, cer := range rec.SSL.Cert {
-			csvRow = append(csvRow, cer.Issued, cer.Expires)
+			csvRow = append(csvRow, cer.Issued, cer.Expires, cer.ID)
 		}
 		if err := writer.Write(csvRow); err != nil {
 			log.Fatalln(err)

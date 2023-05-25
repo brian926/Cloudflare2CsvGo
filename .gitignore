@@ -1,5 +1,5 @@
-certs.csv
+certs/*
 .env
 go.mod
 go.sum
-data.txt
+data/*
