@@ -3,3 +3,4 @@ certs/*
 go.mod
 go.sum
 data/*
+cloudflare2csvgo.exe

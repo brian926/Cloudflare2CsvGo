@@ -12,6 +12,8 @@ import(
 	"time"
 )
 
+const layout = "01-02-2006"
+
 type Response struct {
 	Result []struct {
 		Hostname string `json:"hostname"`
@@ -31,7 +33,6 @@ func PrettyPrint(i interface{}) string {
 }
 
 func PrintJSON(str string) {
-	const layout = "01-02-2006"
 	t := time.Now()
 	file := "data/data-" + t.Format(layout) + ".txt"
 
@@ -49,7 +50,6 @@ func PrintJSON(str string) {
 }
 
 func PrintCSV(result Response) {
-	const layout = "01-02-2006"
 	t := time.Now()
 	file := "certs/cert-" + t.Format(layout) + ".csv"
 
